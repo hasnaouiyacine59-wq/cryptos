@@ -4,11 +4,13 @@ export const fmt = {
       ? `$${Number(v).toExponential(2)}`
       : `$${Number(v).toLocaleString(undefined, { maximumFractionDigits: 4 })}`,
 
-  usd: (v: number) =>
-    v >= 1e9 ? `$${(v / 1e9).toFixed(2)}B`
-    : v >= 1e6 ? `$${(v / 1e6).toFixed(2)}M`
-    : v >= 1e3 ? `$${(v / 1e3).toFixed(2)}K`
-    : `$${v.toFixed(2)}`,
+  usd: (v: number) => {
+    if (v == null || isNaN(v)) return '—'
+    if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`
+    if (v >= 1e6) return `$${(v / 1e6).toFixed(2)}M`
+    if (v >= 1e3) return `$${(v / 1e3).toFixed(2)}K`
+    return `$${v.toFixed(2)}`
+  },
 
   pct: (v: number) => `${v > 0 ? '+' : ''}${v?.toFixed(2)}%`,
 
