@@ -14,22 +14,18 @@ export function ChainIcon({ chainId }: { chainId: string }) {
   return <img src={src} alt={chainId} className="w-4 h-4 rounded-full inline-block" />
 }
 
-export function TokenLogo({ imageUrl, symbol }: { imageUrl?: string; symbol: string }) {
+export function TokenLogo({ imageUrl, symbol, size = 'md' }: { imageUrl?: string; symbol: string; size?: 'sm' | 'md' }) {
   const [err, setErr] = useState(false)
+  const cls = size === 'sm' ? 'w-5 h-5 text-[9px]' : 'w-8 h-8 text-xs'
   if (!imageUrl || err) {
     return (
-      <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-xs font-bold text-accent">
+      <div className={`${cls} rounded-full bg-surface border border-border flex items-center justify-center font-bold text-accent`}>
         {symbol.slice(0, 2).toUpperCase()}
       </div>
     )
   }
   return (
-    <img
-      src={imageUrl}
-      alt={symbol}
-      className="w-8 h-8 rounded-full"
-      onError={() => setErr(true)}
-    />
+    <img src={imageUrl} alt={symbol} className={`${cls} rounded-full`} onError={() => setErr(true)} />
   )
 }
 

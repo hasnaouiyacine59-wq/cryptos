@@ -12,7 +12,7 @@ export default function Navbar() {
   const { pathname } = useLocation()
   return (
     <nav className="border-b border-border px-6 py-3 flex items-center gap-6 sticky top-0 bg-bg z-50">
-      <Link to="/" className="text-accent font-bold text-lg tracking-tight">
+      <Link to="/" className="text-accent font-bold text-lg tracking-tight shrink-0">
         🔭 CryptoScope
       </Link>
       <div className="flex gap-4 flex-1">
@@ -29,6 +29,9 @@ export default function Navbar() {
         ))}
       </div>
       <LiveClock />
+      <button className="ml-4 px-4 py-1.5 rounded-full bg-accent text-black text-sm font-bold hover:opacity-90 transition-opacity shrink-0">
+        Connect Wallet
+      </button>
     </nav>
   )
 }

@@ -9,13 +9,14 @@ export interface Pair {
   baseToken: { address: string; name: string; symbol: string }
   quoteToken: { symbol: string }
   priceUsd: string
-  priceChange: { m5: number; h1: number; h6: number; h24: number }
-  volume: { h24: number; h6: number; h1: number; m5: number }
+  priceChange: { m5: number; h1: number; h6: number; h8?: number; h24: number }
+  volume: { h24: number; h6: number; h1: number; h2?: number; m5: number }
   liquidity: { usd: number }
   fdv: number
+  marketCap?: number
   pairCreatedAt: number
   info?: { imageUrl?: string }
-  txns?: { h24: { buys: number; sells: number } }
+  txns?: { h24: { buys: number; sells: number }; h2?: { buys: number; sells: number } }
 }
 
 export const searchPairs = async (query: string): Promise<Pair[]> => {

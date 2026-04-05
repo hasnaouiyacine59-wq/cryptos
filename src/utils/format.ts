@@ -33,4 +33,9 @@ export const fmt = {
 
   time: (d: Date) =>
     d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+
+  num: (v: number) => {
+    if (v == null || isNaN(v)) return '—'
+    return v.toLocaleString()
+  },
 }
