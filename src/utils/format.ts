@@ -1,8 +1,11 @@
 export const fmt = {
-  price: (v: string | number) =>
-    Number(v) < 0.01
-      ? `$${Number(v).toExponential(2)}`
-      : `$${Number(v).toLocaleString(undefined, { maximumFractionDigits: 4 })}`,
+  price: (v: string | number) => {
+    const n = Number(v)
+    if (!n) return '—'
+    if (n < 0.0001) return `$${n.toExponential(2)}`
+    if (n < 1) return `$${n.toFixed(6)}`
+    return `$${n.toLocaleString(undefined, { maximumFractionDigits: 4 })}`
+  },
 
   usd: (v: number) => {
     if (v == null || isNaN(v)) return '—'
@@ -12,7 +15,10 @@ export const fmt = {
     return `$${v.toFixed(2)}`
   },
 
-  pct: (v: number) => `${v > 0 ? '+' : ''}${v?.toFixed(2)}%`,
+  pct: (v: number) => {
+    if (v == null || isNaN(v)) return '—'
+    return `${v > 0 ? '+' : ''}${v.toFixed(2)}%`
+  },
 
   age: (ts: number) => {
     const diff = Date.now() - ts
@@ -20,6 +26,11 @@ export const fmt = {
     if (d > 365) return `${Math.floor(d / 365)}y`
     if (d > 30) return `${Math.floor(d / 30)}mo`
     if (d > 0) return `${d}d`
-    return `${Math.floor(diff / 3600000)}h`
+    const h = Math.floor(diff / 3600000)
+    if (h > 0) return `${h}h`
+    return `${Math.floor(diff / 60000)}m`
   },
+
+  time: (d: Date) =>
+    d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
 }
