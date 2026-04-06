@@ -2,15 +2,25 @@ import { useEffect, useRef, useState } from 'react'
 
 const CHAIN_ICONS: Record<string, string> = {
   ethereum: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
-  bsc: 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
-  polygon: 'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png',
+  bsc:      'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
+  polygon:  'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png',
   arbitrum: 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
-  base: 'https://assets.coingecko.com/asset_platforms/images/131/small/base-network.png',
+  base:     'https://assets.coingecko.com/asset_platforms/images/131/small/base-network.png',
+  solana:   'https://assets.coingecko.com/coins/images/4128/small/solana.png',
+  avalanche:'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png',
+  optimism: 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
+  fantom:   'https://assets.coingecko.com/coins/images/4001/small/Fantom_round.png',
+  cronos:   'https://assets.coingecko.com/coins/images/7310/small/cro_token_logo.png',
+  pulse:    'https://assets.coingecko.com/coins/images/30822/small/pls.png',
 }
 
 export function ChainIcon({ chainId }: { chainId: string }) {
-  const src = CHAIN_ICONS[chainId]
-  if (!src) return <span className="w-4 h-4 rounded-full bg-gray-600 inline-block" />
+  const src = CHAIN_ICONS[chainId?.toLowerCase()]
+  if (!src) return (
+    <span className="w-4 h-4 rounded-full bg-gray-700 inline-flex items-center justify-center text-[8px] text-gray-400 font-bold">
+      {chainId?.slice(0, 2).toUpperCase()}
+    </span>
+  )
   return <img src={src} alt={chainId} className="w-4 h-4 rounded-full inline-block" />
 }
 
@@ -59,12 +69,7 @@ export function TokenLogo({ imageUrl, symbol, size = 'md' }: { imageUrl?: string
   const sources = [imageUrl, COINGECKO_KNOWN[symbol.toUpperCase()]].filter(Boolean) as string[]
   const [idx, setIdx] = useState(0)
 
-  // reset when symbol changes (list re-renders with different token)
-  const prevSymbol = useRef(symbol)
-  if (prevSymbol.current !== symbol) {
-    prevSymbol.current = symbol
-    if (idx !== 0) setIdx(0)
-  }
+  useEffect(() => { setIdx(0) }, [symbol, imageUrl])
 
   const cls = size === 'sm' ? 'w-5 h-5 text-[9px]' : 'w-8 h-8 text-xs'
 
