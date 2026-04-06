@@ -24,12 +24,31 @@ export const searchPairs = async (query: string): Promise<Pair[]> => {
   return data.pairs ?? []
 }
 
-export const getTopPairs = async (): Promise<Pair[]> => {
-  const [eth, bsc] = await Promise.all([
-    axios.get(`${BASE}/search?q=WETH`),
-    axios.get(`${BASE}/search?q=WBNB`),
-  ])
-  return [...(eth.data.pairs ?? []), ...(bsc.data.pairs ?? [])].slice(0, 50)
+// Fan out across common quote tokens to get ~150-200 results instead of 30
+const BROAD_QUERIES = ['USDT', 'USDC', 'WETH', 'WBNB', 'ETH']
+
+export const searchPairsBroad = async (query: string): Promise<Pair[]> => {
+  const queries = query.length > 1
+    ? [query]
+    : BROAD_QUERIES
+
+  const results = await Promise.allSettled(
+    queries.map(q => axios.get(`${BASE}/search?q=${q}`).then(r => r.data.pairs ?? []))
+  )
+
+  const seen = new Set<string>()
+  const pairs: Pair[] = []
+  for (const r of results) {
+    if (r.status === 'fulfilled') {
+      for (const p of r.value) {
+        if (!seen.has(p.pairAddress)) {
+          seen.add(p.pairAddress)
+          pairs.push(p)
+        }
+      }
+    }
+  }
+  return pairs
 }
 
 export const getPair = async (chainId: string, pairAddress: string): Promise<Pair | null> => {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { searchPairs, type Pair } from '../api/dexscreener'
+import { searchPairs, searchPairsBroad, type Pair } from '../api/dexscreener'
 import { ChainIcon, PriceCell, TokenLogo } from '../components/TokenLogo'
 import { TrendingBar } from '../components/TrendingBar'
 import { Sparkline } from '../components/Sparkline'
@@ -31,7 +31,7 @@ function getNestedVal(obj: Pair, key: SortKey): number {
 export default function Home() {
   const [pairs, setPairs] = useState<Pair[]>([])
   const [prevPrices, setPrevPrices] = useState<Record<string, string>>({})
-  const [query, setQuery] = useState('ETH')
+  const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>('priceChange.h24')
@@ -40,7 +40,7 @@ export default function Home() {
 
   const fetchPairs = useCallback(async (q: string) => {
     try {
-      const data = await searchPairs(q)
+      const data = await (q.length > 1 ? searchPairs(q) : searchPairsBroad(q))
       setPairs(prev => {
         const prices: Record<string, string> = {}
         prev.forEach(p => { prices[p.pairAddress] = p.priceUsd })
@@ -77,7 +77,7 @@ export default function Home() {
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">🔍</span>
           <input
             className="w-full bg-surface border border-border rounded-lg pl-9 pr-4 py-2 text-sm outline-none focus:border-accent placeholder-gray-600"
-            placeholder="Search pairs..."
+            placeholder="Search token or pair..."
             value={query}
             onChange={e => setQuery(e.target.value)}
           />
