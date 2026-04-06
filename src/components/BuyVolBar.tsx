@@ -1,14 +1,18 @@
-// Green/red split bar showing buy vs sell volume ratio
+// Pill badge showing buy % — green if buys dominate, red if sells dominate
 export function BuyVolBar({ buys = 0, sells = 0 }: { buys?: number; sells?: number }) {
   const total = buys + sells
   const buyPct = total === 0 ? 50 : Math.round((buys / total) * 100)
+  const up = buyPct >= 50
+
   return (
-    <div className="flex flex-col items-start gap-0.5 min-w-[72px]">
-      <div className="flex w-full h-1.5 rounded overflow-hidden">
-        <div className="bg-green-500 h-full" style={{ width: `${buyPct}%` }} />
-        <div className="bg-red-500 h-full flex-1" />
-      </div>
-      <span className="text-[10px] text-gray-400">{buyPct}%</span>
+    <div
+      className="inline-flex items-center justify-center rounded px-3 py-1 text-sm font-semibold min-w-[64px]"
+      style={{
+        background: up ? 'rgba(0,229,160,0.15)' : 'rgba(255,61,87,0.15)',
+        color: up ? '#00e5a0' : '#ff3d57',
+      }}
+    >
+      {buyPct}%
     </div>
   )
 }
