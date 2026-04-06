@@ -7,7 +7,7 @@ export interface Pair {
   dexId: string
   pairAddress: string
   baseToken: { address: string; name: string; symbol: string }
-  quoteToken: { symbol: string }
+  quoteToken: { address?: string; symbol: string }
   priceUsd: string
   priceChange: { m5: number; h1: number; h6: number; h8?: number; h24: number }
   volume: { h24: number; h6: number; h1: number; h2?: number; m5: number }

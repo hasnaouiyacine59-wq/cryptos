@@ -65,11 +65,45 @@ const COINGECKO_KNOWN: Record<string, string> = {
   NEAR: 'https://assets.coingecko.com/coins/images/10365/small/near.jpg',
 }
 
-export function TokenLogo({ imageUrl, symbol, size = 'md' }: { imageUrl?: string; symbol: string; size?: 'sm' | 'md' }) {
-  const sources = [imageUrl, COINGECKO_KNOWN[symbol.toUpperCase()]].filter(Boolean) as string[]
-  const [idx, setIdx] = useState(0)
+// DexScreener chainId → Trust Wallet blockchain folder name
+const TW_CHAIN: Record<string, string> = {
+  ethereum: 'ethereum',
+  bsc:      'smartchain',
+  polygon:  'polygon',
+  arbitrum: 'arbitrum',
+  base:     'base',
+  optimism: 'optimism',
+  avalanche:'avalanchec',
+  fantom:   'fantom',
+  solana:   'solana',
+  cronos:   'cronos',
+}
 
-  useEffect(() => { setIdx(0) }, [symbol, imageUrl])
+function trustWalletUrl(chainId: string, address: string) {
+  const chain = TW_CHAIN[chainId?.toLowerCase()]
+  if (!chain || !address || address.startsWith('0x000000000000')) return null
+  // Trust Wallet uses checksummed addresses for EVM, exact address for Solana
+  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${chain}/assets/${address}/logo.png`
+}
+
+export function TokenLogo({
+  imageUrl, symbol, address, chainId, size = 'md',
+}: {
+  imageUrl?: string
+  symbol: string
+  address?: string
+  chainId?: string
+  size?: 'sm' | 'md'
+}) {
+  const twUrl = address && chainId ? trustWalletUrl(chainId, address) : null
+  const sources = [
+    imageUrl,
+    twUrl,
+    COINGECKO_KNOWN[symbol.toUpperCase()],
+  ].filter(Boolean) as string[]
+
+  const [idx, setIdx] = useState(0)
+  useEffect(() => { setIdx(0) }, [symbol, imageUrl, address])
 
   const cls = size === 'sm' ? 'w-5 h-5 text-[9px]' : 'w-8 h-8 text-xs'
 

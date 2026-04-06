@@ -136,11 +136,11 @@ export default function Home() {
                       <div className="relative shrink-0 w-10 h-8">
                         {/* quote token — behind */}
                         <span className="absolute left-4 top-0">
-                          <TokenLogo imageUrl={undefined} symbol={p.quoteToken.symbol} />
+                          <TokenLogo imageUrl={undefined} symbol={p.quoteToken.symbol} address={p.quoteToken.address} chainId={p.chainId} />
                         </span>
                         {/* base token — front */}
                         <span className="absolute left-0 top-0 ring-2 ring-bg rounded-full">
-                          <TokenLogo imageUrl={p.info?.imageUrl} symbol={p.baseToken.symbol} />
+                          <TokenLogo imageUrl={p.info?.imageUrl} symbol={p.baseToken.symbol} address={p.baseToken.address} chainId={p.chainId} />
                         </span>
                         {/* chain badge */}
                         <span className="absolute -bottom-0.5 right-0 ring-1 ring-bg rounded-full">
