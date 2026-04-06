@@ -55,17 +55,24 @@ export default function Home() {
 
   useEffect(() => {
     setLoading(true)
+    setPage(1)
     fetchPairs(query)
     if (timerRef.current) clearInterval(timerRef.current)
     timerRef.current = setInterval(() => fetchPairs(query), REFRESH_MS)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
   }, [query, fetchPairs])
 
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 20
+
   const sorted = [...pairs].sort((a, b) => {
     const av = getNestedVal(a, sortKey)
     const bv = getNestedVal(b, sortKey)
     return sortDir === 'desc' ? bv - av : av - bv
   })
+
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
+  const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <div className="flex flex-col min-h-0">
@@ -116,12 +123,12 @@ export default function Home() {
               <tr><td colSpan={15} className="h-px bg-border p-0" /></tr>
             </thead>
             <tbody>
-              {sorted.map((p, i) => (
+              {paginated.map((p, i) => (
                 <tr
                   key={p.pairAddress}
                   className="group hover:bg-white/[0.03] transition-colors"
                 >
-                  <td className="py-3 px-4 text-gray-600 text-xs">{i + 1}</td>
+                  <td className="py-3 px-4 text-gray-600 text-xs">{(page - 1) * PAGE_SIZE + i + 1}</td>
 
                   {/* Pair */}
                   <td className="py-3 pr-4">
@@ -214,6 +221,44 @@ export default function Home() {
               ))}
             </tbody>
           </table>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 py-6">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 rounded border border-border text-sm text-gray-400 hover:border-accent hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                ← Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(n => n === 1 || n === totalPages || Math.abs(n - page) <= 2)
+                .reduce<(number | '...')[]>((acc, n, idx, arr) => {
+                  if (idx > 0 && n - (arr[idx - 1] as number) > 1) acc.push('...')
+                  acc.push(n)
+                  return acc
+                }, [])
+                .map((n, i) => n === '...'
+                  ? <span key={`e${i}`} className="text-gray-600 px-1">…</span>
+                  : <button
+                      key={n}
+                      onClick={() => setPage(n as number)}
+                      className={`w-8 h-8 rounded text-sm transition-colors ${
+                        page === n
+                          ? 'bg-accent text-black font-bold'
+                          : 'border border-border text-gray-400 hover:border-accent hover:text-white'
+                      }`}
+                    >{n}</button>
+                )}
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 rounded border border-border text-sm text-gray-400 hover:border-accent hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </div>
       )}
 
