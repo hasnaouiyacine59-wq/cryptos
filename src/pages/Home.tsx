@@ -126,9 +126,17 @@ export default function Home() {
                   {/* Pair */}
                   <td className="py-3 pr-4">
                     <Link to={`/pair/${p.chainId}/${p.pairAddress}`} className="flex items-center gap-2.5 hover:opacity-90">
-                      <div className="relative shrink-0">
-                        <TokenLogo imageUrl={p.info?.imageUrl} symbol={p.baseToken.symbol} />
-                        <span className="absolute -bottom-0.5 -right-0.5 ring-1 ring-bg rounded-full">
+                      <div className="relative shrink-0 w-10 h-8">
+                        {/* quote token — behind */}
+                        <span className="absolute left-4 top-0">
+                          <TokenLogo imageUrl={undefined} symbol={p.quoteToken.symbol} />
+                        </span>
+                        {/* base token — front */}
+                        <span className="absolute left-0 top-0 ring-2 ring-bg rounded-full">
+                          <TokenLogo imageUrl={p.info?.imageUrl} symbol={p.baseToken.symbol} />
+                        </span>
+                        {/* chain badge */}
+                        <span className="absolute -bottom-0.5 right-0 ring-1 ring-bg rounded-full">
                           <ChainIcon chainId={p.chainId} />
                         </span>
                       </div>
