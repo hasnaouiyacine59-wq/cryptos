@@ -14,18 +14,53 @@ export function ChainIcon({ chainId }: { chainId: string }) {
   return <img src={src} alt={chainId} className="w-4 h-4 rounded-full inline-block" />
 }
 
+const COINGECKO_KNOWN: Record<string, string> = {
+  ETH:  'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
+  BTC:  'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
+  BNB:  'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
+  USDT: 'https://assets.coingecko.com/coins/images/325/small/Tether.png',
+  USDC: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png',
+  MATIC:'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png',
+  SOL:  'https://assets.coingecko.com/coins/images/4128/small/solana.png',
+  ARB:  'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
+  OP:   'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
+  AVAX: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png',
+  LINK: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png',
+  UNI:  'https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png',
+  AAVE: 'https://assets.coingecko.com/coins/images/12645/small/AAVE.png',
+  DAI:  'https://assets.coingecko.com/coins/images/9956/small/Badge_Dai.png',
+  WETH: 'https://assets.coingecko.com/coins/images/2518/small/weth.png',
+  WBNB: 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
+  SHIB: 'https://assets.coingecko.com/coins/images/11939/small/shiba.png',
+  PEPE: 'https://assets.coingecko.com/coins/images/29850/small/pepe-token.jpeg',
+  DOGE: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png',
+  LTC:  'https://assets.coingecko.com/coins/images/2/small/litecoin.png',
+}
+
 export function TokenLogo({ imageUrl, symbol, size = 'md' }: { imageUrl?: string; symbol: string; size?: 'sm' | 'md' }) {
-  const [err, setErr] = useState(false)
+  const sources = [
+    imageUrl,
+    COINGECKO_KNOWN[symbol.toUpperCase()],
+  ].filter(Boolean) as string[]
+
+  const [idx, setIdx] = useState(0)
   const cls = size === 'sm' ? 'w-5 h-5 text-[9px]' : 'w-8 h-8 text-xs'
-  if (!imageUrl || err) {
+
+  if (idx >= sources.length) {
     return (
       <div className={`${cls} rounded-full bg-surface border border-border flex items-center justify-center font-bold text-accent`}>
         {symbol.slice(0, 2).toUpperCase()}
       </div>
     )
   }
+
   return (
-    <img src={imageUrl} alt={symbol} className={`${cls} rounded-full`} onError={() => setErr(true)} />
+    <img
+      src={sources[idx]}
+      alt={symbol}
+      className={`${cls} rounded-full`}
+      onError={() => setIdx(i => i + 1)}
+    />
   )
 }
 
