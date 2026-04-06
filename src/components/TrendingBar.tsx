@@ -5,18 +5,21 @@ import { TokenLogo } from './TokenLogo'
 export function TrendingBar({ pairs }: { pairs: Pair[] }) {
   const top = pairs.slice(0, 10)
   return (
-    <div className="flex items-center gap-1 px-4 py-2 border-b border-border overflow-x-auto scrollbar-none bg-bg">
-      <span className="text-orange-400 text-sm mr-2 shrink-0">🔥</span>
+    <div className="flex items-center gap-0 border-b border-border bg-[#0d0d0f] overflow-x-auto scrollbar-none">
+      {/* Fire icon */}
+      <span className="text-orange-500 text-base px-3 shrink-0">🔥</span>
+
       {top.map((p, i) => (
         <Link
           key={p.pairAddress}
           to={`/pair/${p.chainId}/${p.pairAddress}`}
-          className="flex items-center gap-1.5 px-3 py-1 rounded bg-surface border border-border hover:border-accent text-xs shrink-0 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2.5 border-l border-border hover:bg-white/5 transition-colors shrink-0 group"
         >
-          <span className="text-gray-500">#{i + 1}</span>
+          <span className="text-gray-600 text-[11px] font-medium">#{i + 1}</span>
           <TokenLogo imageUrl={p.info?.imageUrl} symbol={p.baseToken.symbol} size="sm" />
-          <span className="font-semibold text-white">{p.baseToken.symbol}</span>
-          <span className="text-gray-500">/{p.quoteToken.symbol}</span>
+          <span className="text-white text-[13px] font-semibold tracking-wide group-hover:text-accent transition-colors">
+            {p.baseToken.symbol}
+          </span>
         </Link>
       ))}
     </div>
