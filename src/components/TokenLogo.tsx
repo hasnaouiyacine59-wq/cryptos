@@ -96,20 +96,23 @@ export function TokenLogo({
   size?: 'sm' | 'md'
 }) {
   const twUrl = address && chainId ? trustWalletUrl(chainId, address) : null
-  const sources = [
-    imageUrl,
-    twUrl,
-    COINGECKO_KNOWN[symbol.toUpperCase()],
-  ].filter(Boolean) as string[]
-
+  const sources = [imageUrl, twUrl, COINGECKO_KNOWN[symbol.toUpperCase()]].filter(Boolean) as string[]
   const [idx, setIdx] = useState(0)
-  useEffect(() => { setIdx(0) }, [symbol, imageUrl, address])
+
+  // key trick: reset idx when sources change
+  const srcKey = sources[0] ?? symbol
+  const prevKey = useRef(srcKey)
+  if (prevKey.current !== srcKey) {
+    prevKey.current = srcKey
+    if (idx !== 0) setIdx(0)
+  }
 
   const cls = size === 'sm' ? 'w-5 h-5 text-[9px]' : 'w-8 h-8 text-xs'
+  const src = sources[idx]
 
-  if (idx >= sources.length) {
+  if (!src) {
     return (
-      <div className={`${cls} rounded-full bg-surface border border-border flex items-center justify-center font-bold text-accent`}>
+      <div className={`${cls} rounded-full bg-surface border border-border flex items-center justify-center font-bold text-accent shrink-0`}>
         {symbol.slice(0, 2).toUpperCase()}
       </div>
     )
@@ -117,9 +120,10 @@ export function TokenLogo({
 
   return (
     <img
-      src={sources[idx]}
+      key={src}
+      src={src}
       alt={symbol}
-      className={`${cls} rounded-full object-cover`}
+      className={`${cls} rounded-full object-cover shrink-0`}
       onError={() => setIdx(i => i + 1)}
     />
   )
