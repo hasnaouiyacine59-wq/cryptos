@@ -62,7 +62,7 @@ export function TrendingBar({ pairs }: { pairs: Pair[] }) {
           className="flex items-center gap-1.5 px-4 py-2.5 border-l border-border hover:bg-white/5 transition-colors shrink-0 group"
         >
           <span className="text-gray-600 text-[11px] font-medium">#{i + 1}</span>
-          <TokenLogo imageUrl={item.icon} symbol={item.symbol} size="sm" />
+          <TokenLogo imageUrl={item.icon} symbol={item.symbol} address={item.tokenAddress} chainId={item.chainId} size="sm" />
           <span className="text-white text-[13px] font-semibold tracking-wide group-hover:text-accent transition-colors">
             {item.symbol}
           </span>
