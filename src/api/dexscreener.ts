@@ -51,6 +51,19 @@ export const searchPairsBroad = async (query: string): Promise<Pair[]> => {
   return pairs
 }
 
+export interface BoostedToken {
+  chainId: string
+  tokenAddress: string
+  icon?: string
+  description?: string
+  links?: { type: string; label: string; url: string }[]
+}
+
+export const getTopBoosted = async (): Promise<BoostedToken[]> => {
+  const { data } = await axios.get('https://api.dexscreener.com/token-boosts/top/v1')
+  return Array.isArray(data) ? data.slice(0, 10) : []
+}
+
 export const getPair = async (chainId: string, pairAddress: string): Promise<Pair | null> => {
   const { data } = await axios.get(`${BASE}/pairs/${chainId}/${pairAddress}`)
   return data.pairs?.[0] ?? null
