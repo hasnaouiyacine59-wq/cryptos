@@ -3,7 +3,17 @@ import type { Pair } from '../api/dexscreener'
 import { TokenLogo } from './TokenLogo'
 
 export function TrendingBar({ pairs }: { pairs: Pair[] }) {
-  const top = pairs.slice(0, 10)
+  // Deduplicate by base token symbol, pick highest volume per token, sort by volume
+  const seen = new Set<string>()
+  const top = [...pairs]
+    .sort((a, b) => (b.volume?.h24 ?? 0) - (a.volume?.h24 ?? 0))
+    .filter(p => {
+      const sym = p.baseToken.symbol.toUpperCase()
+      if (seen.has(sym)) return false
+      seen.add(sym)
+      return true
+    })
+    .slice(0, 10)
   return (
     <div className="flex items-center gap-0 border-b border-border bg-[#0d0d0f] overflow-x-auto scrollbar-none">
       {/* Fire icon */}
