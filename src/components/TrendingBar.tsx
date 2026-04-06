@@ -16,6 +16,7 @@ export function TrendingBar({ pairs }: { pairs: Pair[] }) {
           <span className="text-gray-500">#{i + 1}</span>
           <TokenLogo imageUrl={p.info?.imageUrl} symbol={p.baseToken.symbol} size="sm" />
           <span className="font-semibold text-white">{p.baseToken.symbol}</span>
+          <span className="text-gray-500">/{p.quoteToken.symbol}</span>
         </Link>
       ))}
     </div>
