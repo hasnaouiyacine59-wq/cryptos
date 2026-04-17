@@ -21,67 +21,91 @@ export default function PairPage() {
   if (!pair) return <p className="p-6 text-gray-500">Loading pair...</p>
 
   const watched = has(pair.pairAddress)
+  const buys = pair.txns?.h24?.buys ?? 0
+  const sells = pair.txns?.h24?.sells ?? 0
+  const total = buys + sells
+  const buyPct = total > 0 ? Math.round((buys / total) * 100) : 50
 
   return (
     <div className="flex gap-6 p-6 w-full">
-      <div className="flex-1 max-w-3xl min-w-0">
-      <div className="flex items-center gap-4 mb-6">
-        <TokenLogo imageUrl={pair.info?.imageUrl} symbol={pair.baseToken.symbol} />
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            {pair.baseToken.symbol}/{pair.quoteToken.symbol}
-            <ChainIcon chainId={pair.chainId} />
-          </h1>
-          <p className="text-gray-400 text-sm">{pair.baseToken.name} · {pair.dexId}</p>
+
+      {/* Main Content */}
+      <div className="flex-1 min-w-0 space-y-5">
+
+        {/* Header */}
+        <div className="flex items-center gap-4 bg-surface border border-border rounded-xl p-4">
+          <TokenLogo imageUrl={pair.info?.imageUrl} symbol={pair.baseToken.symbol} />
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold flex items-center gap-2 flex-wrap">
+              {pair.baseToken.symbol}
+              <span className="text-gray-500 font-normal">/ {pair.quoteToken.symbol}</span>
+              <ChainIcon chainId={pair.chainId} />
+            </h1>
+            <p className="text-gray-400 text-sm truncate">{pair.baseToken.name} · <span className="capitalize">{pair.dexId}</span></p>
+          </div>
+          <div className="ml-auto flex items-center gap-3 shrink-0">
+            <div className="text-right">
+              <p className="text-2xl font-bold font-mono">{fmt.price(pair.priceUsd)}</p>
+              <p className={`text-sm font-medium ${(pair.priceChange?.h24 ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {fmt.pct(pair.priceChange?.h24)} <span className="text-gray-500 font-normal">24h</span>
+              </p>
+            </div>
+            <button
+              onClick={() => watched ? remove(pair.pairAddress) : add(pair)}
+              className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
+                watched
+                  ? 'border-yellow-400 text-yellow-400 hover:bg-yellow-400/10'
+                  : 'border-gray-600 text-gray-400 hover:border-yellow-400 hover:text-yellow-400'
+              }`}
+            >
+              {watched ? '⭐ Watching' : '☆ Watch'}
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => watched ? remove(pair.pairAddress) : add(pair)}
-          className={`ml-auto px-4 py-2 rounded border text-sm transition-colors ${
-            watched
-              ? 'border-yellow-400 text-yellow-400 hover:bg-yellow-400/10'
-              : 'border-gray-600 text-gray-400 hover:border-yellow-400 hover:text-yellow-400'
-          }`}
-        >
-          {watched ? '⭐ Watching' : '☆ Watch'}
-        </button>
-      </div>
 
-      <div className="text-3xl font-bold font-mono mb-6">{fmt.price(pair.priceUsd)}</div>
+        {/* Price Changes */}
+        <div className="grid grid-cols-4 gap-3">
+          {([['5m', pair.priceChange?.m5], ['1h', pair.priceChange?.h1], ['6h', pair.priceChange?.h6], ['24h', pair.priceChange?.h24]] as [string, number | undefined][]).map(([label, raw]) => (
+            <div key={label} className="bg-surface border border-border rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-500 mb-1">{label}</p>
+              <p className={`font-bold text-base ${(raw ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>{fmt.pct(raw)}</p>
+            </div>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        {[
-          ['5m', fmt.pct(pair.priceChange?.m5), pair.priceChange?.m5],
-          ['1h', fmt.pct(pair.priceChange?.h1), pair.priceChange?.h1],
-          ['6h', fmt.pct(pair.priceChange?.h6), pair.priceChange?.h6],
-          ['24h', fmt.pct(pair.priceChange?.h24), pair.priceChange?.h24],
-        ].map(([label, value, raw]) => (
-          <div key={label as string} className="bg-surface border border-border rounded p-3 text-center">
-            <p className="text-xs text-gray-500 mb-1">{label}</p>
-            <p className={`font-bold text-lg ${Number(raw) >= 0 ? 'text-green-400' : 'text-red-400'}`}>{value}</p>
+        {/* Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {[
+            ['24h Volume', fmt.usd(pair.volume?.h24)],
+            ['Liquidity', fmt.usd(pair.liquidity?.usd)],
+            ['FDV', fmt.usd(pair.fdv)],
+            ['Market Cap', fmt.usd(pair.marketCap)],
+            ['Pair Age', pair.pairCreatedAt ? fmt.age(pair.pairCreatedAt) : '—'],
+            ['Chain', pair.chainId],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-surface border border-border rounded-xl p-4">
+              <p className="text-xs text-gray-500 mb-1">{label}</p>
+              <p className="font-semibold capitalize">{value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Buy/Sell Pressure */}
+        <div className="bg-surface border border-border rounded-xl p-4">
+          <p className="text-xs text-gray-500 mb-3">Buy / Sell Pressure (24h)</p>
+          <div className="flex rounded-full overflow-hidden h-3 mb-2">
+            <div className="bg-green-500 transition-all" style={{ width: `${buyPct}%` }} />
+            <div className="bg-red-500 flex-1" />
           </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {[
-          ['24h Volume', fmt.usd(pair.volume?.h24)],
-          ['Liquidity', fmt.usd(pair.liquidity?.usd)],
-          ['FDV', fmt.usd(pair.fdv)],
-          ['Buys (24h)', pair.txns?.h24?.buys?.toString() ?? '—'],
-          ['Sells (24h)', pair.txns?.h24?.sells?.toString() ?? '—'],
-          ['Pair Age', pair.pairCreatedAt ? fmt.age(pair.pairCreatedAt) : '—'],
-        ].map(([label, value]) => (
-          <div key={label} className="bg-surface border border-border rounded p-4">
-            <p className="text-xs text-gray-500 mb-1">{label}</p>
-            <p className="font-semibold">{value}</p>
+          <div className="flex justify-between text-xs">
+            <span className="text-green-400">🟢 {buys} buys ({buyPct}%)</span>
+            <span className="text-red-400">{sells} sells ({100 - buyPct}%) 🔴</span>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="mt-4 text-xs text-gray-600 break-all">
-        Pair: {pair.pairAddress}
+        {/* Pair Address */}
+        <p className="text-xs text-gray-600 break-all px-1">Pair: {pair.pairAddress}</p>
       </div>
-    </div>
 
       {/* Sidebar Ad */}
       <div className="hidden lg:flex lg:flex-col w-[300px] shrink-0 sticky top-6 self-start">
@@ -95,6 +119,7 @@ export default function PairPage() {
         </div>
         {/* END AADS AD UNIT 2434803 */}
       </div>
+
     </div>
   )
 }
