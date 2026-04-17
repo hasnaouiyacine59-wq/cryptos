@@ -23,7 +23,8 @@ export default function PairPage() {
   const watched = has(pair.pairAddress)
 
   return (
-    <div className="p-6 max-w-3xl">
+    <div className="flex gap-6 p-6">
+    <div className="flex-1 max-w-3xl">
       <div className="flex items-center gap-4 mb-6">
         <TokenLogo imageUrl={pair.info?.imageUrl} symbol={pair.baseToken.symbol} />
         <div>
@@ -79,6 +80,20 @@ export default function PairPage() {
 
       <div className="mt-4 text-xs text-gray-600 break-all">
         Pair: {pair.pairAddress}
+      </div>
+    </div>
+
+      {/* Sidebar Ad */}
+      <div className="hidden lg:block w-[160px] shrink-0 sticky top-6 self-start">
+        {/* BEGIN AADS AD UNIT 2434803 */}
+        <div id="frame" style={{ width: '100%', margin: 'auto', position: 'relative', zIndex: 99998 }}>
+          <iframe
+            data-aa='2434803'
+            src='//acceptable.a-ads.com/2434803/?size=Adaptive'
+            style={{ border: 0, padding: 0, width: '70%', height: 'auto', overflow: 'hidden', display: 'block', margin: 'auto' }}
+          />
+        </div>
+        {/* END AADS AD UNIT 2434803 */}
       </div>
     </div>
   )
