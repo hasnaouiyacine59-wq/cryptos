@@ -7,7 +7,7 @@ export const fmt = {
     return `$${n.toLocaleString(undefined, { maximumFractionDigits: 4 })}`
   },
 
-  usd: (v: number) => {
+  usd: (v: number | undefined) => {
     if (v == null || isNaN(v)) return '—'
     if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`
     if (v >= 1e6) return `$${(v / 1e6).toFixed(2)}M`
@@ -15,7 +15,7 @@ export const fmt = {
     return `$${v.toFixed(2)}`
   },
 
-  pct: (v: number) => {
+  pct: (v: number | undefined) => {
     if (v == null || isNaN(v)) return '—'
     return `${v > 0 ? '+' : ''}${v.toFixed(2)}%`
   },
