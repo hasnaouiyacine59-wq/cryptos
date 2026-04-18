@@ -105,9 +105,15 @@ export default function PairPage() {
 
         {/* Pair Address */}
         <p className="text-xs text-gray-600 break-all px-1">Pair: {pair.pairAddress}</p>
+
+        {/* Pair Ad */}
+        <iframe
+          key={`${chainId}-${pairAddress}`}
+          data-aa='2433217'
+          src={`//ad.a-ads.com/2433217/?size=728x90&partner=${chainId}_${pairAddress}`}
+          style={{ border: 0, padding: 0, width: 728, height: 90, overflow: 'hidden', display: 'block' }}
+        />
       </div>
-
-
 
     </div>
   )
