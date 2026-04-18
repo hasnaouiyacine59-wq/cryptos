@@ -107,18 +107,7 @@ export default function PairPage() {
         <p className="text-xs text-gray-600 break-all px-1">Pair: {pair.pairAddress}</p>
       </div>
 
-      {/* Sidebar Ad */}
-      <div className="hidden lg:flex lg:flex-col w-[300px] shrink-0 sticky top-6 self-start">
-        {/* BEGIN AADS AD UNIT 2434803 */}
-        <div id="frame" style={{ width: '100%', margin: 'auto', position: 'relative', zIndex: 99998 }}>
-          <iframe
-            data-aa='2434803'
-            src='//acceptable.a-ads.com/2434803/?size=Adaptive'
-            style={{ border: 0, padding: 0, width: '100%', height: 'auto', overflow: 'hidden', display: 'block', margin: 'auto' }}
-          />
-        </div>
-        {/* END AADS AD UNIT 2434803 */}
-      </div>
+
 
     </div>
   )
